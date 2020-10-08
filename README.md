@@ -1,6 +1,6 @@
 # Weather Parser
 
-Console application shows the current weather in Minsk.
+Console application that shows the current weather in Minsk.
 
 ## Used technologies:
 - Jsoup
