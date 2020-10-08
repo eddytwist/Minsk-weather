@@ -1,5 +1,6 @@
 package org.example.util;
 
+import org.example.exceptions.NoDataException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -36,14 +37,16 @@ public class Parser implements WeatherInfo{
     }
 
     /**
-     * @return a String from parsed page.
+     *
      * Does finishing selections and concatenation and makes the String ready for printing.
+     * @return a String from parsed page.
+     * @throws @exception NoDataException if HTML page could not be read.
      */
     @Override
-    public String getWeatherInfo() {
+    public String getWeatherInfo() throws NoDataException {
         Document page = getPage();
         if (page == null)
-            return "Соединение отсутствует.";
+            throw new NoDataException("Соединение отсутствует, нет данных.");
         Element tableWth = page.select("div[class=tabs _center]").first();
         String todayWeather = tableWth.select("div[class=tab-weather]").select("span[class=unit unit_temperature_c]").first().text();
         String todayDate = tableWth.select("div[class=tab  tooltip]").select("div[class=tab-content]").select("div[class=date]").text();
