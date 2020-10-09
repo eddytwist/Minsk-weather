@@ -1,10 +1,11 @@
 package org.example.util;
 
-import org.example.exceptions.NoDataException;
+import org.example.exceptions.NoConnectionException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 /**
  * The <code>Parser</code> class implements <code>WeatherInfo</code> interface and used for parsing the HTML page.
@@ -25,14 +26,19 @@ public class Parser implements WeatherInfo{
 
     /**
      * @return a parsed via Jsoup page for further selection.
-     * @throws IOException if HTML page could not be read.
+     * @throws NoConnectionException if it's not possible to connect to the page.
+     * @throws MalformedURLException if HTML page could not be read.
      */
-    private Document getPage() {
+    private Document getPage() throws NoConnectionException, MalformedURLException {
         try {
             page = Jsoup.parse(new URL(GISMETEO_URL), 10000);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            throw e;
         } catch (IOException e) {
-            System.out.println("Проверьте интернет соединение.");
+            throw new NoConnectionException("Проверьте интернет соединение.");
         }
+
         return page;
     }
 
@@ -40,13 +46,15 @@ public class Parser implements WeatherInfo{
      *
      * Does finishing selections and concatenation and makes the String ready for printing.
      * @return a String from parsed page.
-     * @throws @exception NoDataException if HTML page could not be read.
      */
     @Override
-    public String getWeatherInfo() throws NoDataException {
-        Document page = getPage();
-        if (page == null)
-            throw new NoDataException("Соединение отсутствует, нет данных.");
+    public String getWeatherInfo() {
+        try {
+            page = getPage();
+        } catch (NoConnectionException | MalformedURLException e) {
+            return "Нет данных. " +
+                    "\nСегодня солнечно, улыбайтесь!";
+        }
         Element tableWth = page.select("div[class=tabs _center]").first();
         String todayWeather = tableWth.select("div[class=tab-weather]").select("span[class=unit unit_temperature_c]").first().text();
         String todayDate = tableWth.select("div[class=tab  tooltip]").select("div[class=tab-content]").select("div[class=date]").text();
