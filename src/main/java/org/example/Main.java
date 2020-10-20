@@ -17,16 +17,16 @@ public class Main {
   /**
    * The Logger Log4j gets logs and puts them into /logs/logfile/log.
    */
-  private static final Logger log = LoggerFactory.getLogger(Main.class);
+  private static final Logger LOG = LoggerFactory.getLogger(Main.class);
 
   /**
    * The entry point.
    */
   public static void main(String... args) {
-    log.info("The program started");
+    LOG.info("THE PROGRAM IS RUNNING.");
     WeatherInfo weatherInfo = new Parser();
     String weather = weatherInfo.getWeatherInfo();
     System.out.println(weather);
-    log.info("The program successfully finished");
+    LOG.info("THE PROGRAM SUCCESSFULLY FINISHED.");
   }
 }
