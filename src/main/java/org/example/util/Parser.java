@@ -43,7 +43,7 @@ public class Parser implements WeatherInfo{
     /**
      * @return a parsed via Jsoup page for further selection.
      * @throws NoConnectionException if it's not possible to connect to the page.
-     * @throws MalformedURLException if HTML page could not be read.
+     * @exception MalformedURLException if HTML page could not be read.
      */
     private Document getPage() throws NoConnectionException {
         try {

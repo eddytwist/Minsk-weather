@@ -27,5 +27,20 @@ public class ConnectorDB {
         Class.forName(driver);
         return DriverManager.getConnection(url + dbName, user, password);
     }
+
+    /**
+     * Create a connection to server using users data.
+     * @throws SQLException if trouble with server connection.
+     * @throws ClassNotFoundException if MySQL driver has not found.
+     */
+    public static Connection getConnectionForCreatingDB() throws SQLException, ClassNotFoundException {
+        ResourceBundle resource = ResourceBundle.getBundle("database");
+        String url = resource.getString("db.url");
+        String user = resource.getString("db.user");
+        String password = resource.getString("db.password");
+        String driver = resource.getString("db.driver");
+        Class.forName(driver);
+        return DriverManager.getConnection(url, user, password);
+    }
 }
 

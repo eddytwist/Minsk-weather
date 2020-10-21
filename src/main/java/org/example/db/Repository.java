@@ -26,10 +26,15 @@ public class Repository {
      */
     private Connection connection;
 
+    {
+        createDatabase();
+        createTable();
+    }
+
     /**
      * Printing data from database.
-     * @throws SQLException if trouble with database connection.
-     * @throws ClassNotFoundException if MySQL driver has not found.
+     * @exception  SQLException if trouble with database connection.
+     * @exception  ClassNotFoundException if MySQL driver has not found.
      */
     public void printWeatherInfo() {
         String sql = "SELECT * FROM weather_table ORDER BY id DESC LIMIT 1";
@@ -54,8 +59,8 @@ public class Repository {
 
     /**
      * Insert data into MySQL database.
-     * @throws SQLException if trouble with database connection.
-     * @throws ClassNotFoundException if MySQL driver has not found.
+     * @exception SQLException if trouble with database connection.
+     * @exception ClassNotFoundException if MySQL driver has not found.
      */
     public void insertWeatherInfo(String date, String time, String temperature) {
         String sql = "INSERT INTO weather_table (date, time, temperature) VALUES (?, ?, ?)";
@@ -73,6 +78,73 @@ public class Repository {
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             LOG.error("Connection failed, can't insert data into DB.", e);
+        }
+    }
+
+    /**
+     * Creates MySQL database on server.
+     * @exception SQLException if trouble with server connection.
+     * @exception ClassNotFoundException if MySQL driver has not found.
+     */
+    public void createDatabase() {
+        String sql = "CREATE DATABASE IF NOT EXISTS weather_db";
+        try {
+            connection = ConnectorDB.getConnectionForCreatingDB();
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(sql);
+            connection.close();
+            LOG.info("The MySQL database was created.");
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            LOG.error("Connection failed, database wasn't created.", e);
+        }
+    }
+
+    /**
+     * Creates a table in the MySQL database.
+     * @exception SQLException if trouble with database connection.
+     * @exception ClassNotFoundException if MySQL driver has not found.
+     */
+    public void createTable() {
+        String sql = "CREATE TABLE IF NOT EXISTS weather_table"
+                + " (id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,"
+                + " date VARCHAR(20) NOT NULL,"
+                + " time VARCHAR(10) NOT NULL,"
+                + " temperature VARCHAR(20) NOT NULL)";
+        try {
+            connection = ConnectorDB.getConnection();
+            Statement statement = connection.createStatement();
+            statement.executeUpdate(sql);
+            connection.close();
+            initializeTable();
+            LOG.info("The table was created in database.");
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            LOG.error("Connection failed, table wasn't created.", e);
+        }
+    }
+
+    /**
+     * Initialises the table in the MySQL database.
+     * @exception SQLException if trouble with database connection.
+     * @exception ClassNotFoundException if MySQL driver has not found.
+     */
+    public void initializeTable() {
+        String sql = "INSERT INTO weather_table (date, time, temperature)"
+                + " SELECT ?, ?, ?"
+                + " WHERE NOT EXISTS (SELECT * FROM weather_table)";
+        try {
+            connection = ConnectorDB.getConnection();
+            PreparedStatement preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, "today");
+            preparedStatement.setString(2, "now");
+            preparedStatement.setString(3, "awesome weather");
+            preparedStatement.executeUpdate();
+            connection.close();
+            LOG.info("The table was created in database.");
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+            LOG.error("Connection failed, table wasn't initialized.", e);
         }
     }
 }
