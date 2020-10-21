@@ -33,7 +33,7 @@ public class Parser implements WeatherInfo{
     /**
      * The HTML page that we got parsed.
      */
-    private Document page = null;
+    private Document page;
 
     /**
      * The MySQL database instance.
@@ -45,14 +45,13 @@ public class Parser implements WeatherInfo{
      * @throws NoConnectionException if it's not possible to connect to the page.
      * @throws MalformedURLException if HTML page could not be read.
      */
-    private Document getPage() throws NoConnectionException, MalformedURLException {
+    private Document getPage() throws NoConnectionException {
         try {
             page = Jsoup.parse(new URL(GISMETEO_URL), 10000);
             LOG.info("The page was found.");
         } catch (MalformedURLException e) {
             LOG.error(e.getMessage(), e);
             e.printStackTrace();
-            throw e;
         } catch (IOException e) {
             LOG.error("Troubles with connection, data will be taken from the database.", e);
             throw new NoConnectionException("No connection with the internet.");
@@ -61,7 +60,6 @@ public class Parser implements WeatherInfo{
     }
 
     /**
-     *
      * Does finishing selections and concatenation, and makes the String ready for printing.
      * @return a String from parsed page, or prints data from DB if internet connection is lost.
      */
@@ -73,7 +71,7 @@ public class Parser implements WeatherInfo{
         try {
             page = getPage();
             LOG.info("The page was parsed.");
-        } catch (NoConnectionException | MalformedURLException e) {
+        } catch (NoConnectionException e) {
             repository.printWeatherInfo();
             LOG.error(e.getMessage(), e);
             return "That was the last weather forecast update from database.";

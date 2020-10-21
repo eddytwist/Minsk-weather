@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.util.ResourceBundle;
 
 /**
- * The <code>ConnectorDB</code</code> class helps to get a connection to database.
+ * The <code>ConnectorDB</code> class helps to get a connection to database.
  * @autor Eduard Ivanov
  * @since 2020-10-08
  */

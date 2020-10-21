@@ -50,7 +50,6 @@ public class Repository {
             e.printStackTrace();
             LOG.error("Connection failed, can't print data from DB.", e);
         }
-
     }
 
     /**
