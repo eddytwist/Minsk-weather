@@ -1,6 +1,5 @@
 package org.example.util;
 
-import org.example.Main;
 import org.example.db.Repository;
 import org.example.exceptions.NoConnectionException;
 import org.jsoup.Jsoup;
@@ -12,11 +11,11 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-
 /**
  * The <code>Parser</code> class implements <code>WeatherInfo</code> interface and used for parsing the HTML page.
+ * After parsing it puts data to MySQL database.
+ * If connection with internet is lost, Parser gets last data updates from DB.
  * @autor Eduard Ivanov
- * @version 1.0
  * @since 2020-10-08
  */
 public class Parser implements WeatherInfo{
@@ -24,7 +23,7 @@ public class Parser implements WeatherInfo{
     /**
      * The Logger Log4j gets logs and puts them into /logs/logfile/log.
      */
-    private static final Logger LOG = LoggerFactory.getLogger(Main.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Parser.class);
 
     /**
      * The URL field of HTML page for parsing.
@@ -55,8 +54,8 @@ public class Parser implements WeatherInfo{
             e.printStackTrace();
             throw e;
         } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-            throw new NoConnectionException("Check internet connection.");
+            LOG.error("Troubles with connection, data will be taken from the database.", e);
+            throw new NoConnectionException("No connection with the internet.");
         }
         return page;
     }
@@ -64,7 +63,7 @@ public class Parser implements WeatherInfo{
     /**
      *
      * Does finishing selections and concatenation, and makes the String ready for printing.
-     * @return a String from parsed page.
+     * @return a String from parsed page, or prints data from DB if internet connection is lost.
      */
     @Override
     public String getWeatherInfo() {

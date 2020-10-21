@@ -5,11 +5,9 @@ import org.example.util.WeatherInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * Makes program run.
  * @autor Eduard Ivanov
- * @version 1.0
  * @since 2020-10-08
  */
 public class Main {
@@ -27,6 +25,6 @@ public class Main {
     WeatherInfo weatherInfo = new Parser();
     String weather = weatherInfo.getWeatherInfo();
     System.out.println(weather);
-    LOG.info("THE PROGRAM SUCCESSFULLY FINISHED.");
+    LOG.info("THE PROGRAM SUCCESSFULLY FINISHED.\n");
   }
 }
